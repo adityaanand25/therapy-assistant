@@ -1,5 +1,9 @@
 import type { Message } from "../types";
 
+const cleanMessage = (text: string) => {
+  return text.replace(/\*\*/g, "").trim(); // Remove double asterisks and trim extra spaces
+};
+
 const ChatMessage = ({ message }: { message: Message }) => {
   const isUser = message.role === "user";
 
@@ -12,7 +16,7 @@ const ChatMessage = ({ message }: { message: Message }) => {
             : "bg-gray-200 text-gray-900 rounded-bl-none"
         }`}
       >
-        {message.content}
+        {cleanMessage(message.content)}
         <div className="text-xs text-gray-500 mt-1">
           {message.timestamp.toLocaleTimeString()}
         </div>
@@ -22,3 +26,4 @@ const ChatMessage = ({ message }: { message: Message }) => {
 };
 
 export { ChatMessage };
+

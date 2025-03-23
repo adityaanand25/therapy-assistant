@@ -10,12 +10,19 @@ const ChatInput = ({ onSend, disabled }: { onSend: (msg: string) => void; disabl
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && !disabled) {
+      handleSend();
+    }
+  };
+
   return (
     <div className="flex gap-3 p-4">
       <input
         type="text"
         value={input}
         onChange={(e) => setInput(e.target.value)}
+        onKeyDown={handleKeyDown}
         className="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
         placeholder="Type your message..."
         disabled={disabled}
