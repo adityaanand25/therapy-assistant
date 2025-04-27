@@ -9,9 +9,20 @@ const exams = [
   { id: "cds", name: "CDS", color: "red" },
 ];
 
-export function ExamDropdown() {
+interface ExamDropdownProps {
+  onExamSelect?: (exam: typeof exams[0]) => void;
+  selectedExam?: typeof exams[0];
+}
+
+export function ExamDropdown({ onExamSelect, selectedExam: propSelectedExam }: ExamDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedExam, setSelectedExam] = useState(exams[0]);
+  const [selectedExam, setSelectedExam] = useState(propSelectedExam || exams[0]);
+
+  const handleExamSelect = (exam: typeof exams[0]) => {
+    setSelectedExam(exam);
+    setIsOpen(false);
+    onExamSelect?.(exam);
+  };
 
   return (
     <div className="relative">
@@ -28,10 +39,7 @@ export function ExamDropdown() {
           {exams.map((exam) => (
             <button
               key={exam.id}
-              onClick={() => {
-                setSelectedExam(exam);
-                setIsOpen(false);
-              }}
+              onClick={() => handleExamSelect(exam)}
               className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors dark:text-white ${
                 selectedExam.id === exam.id ? "bg-gray-50 dark:bg-gray-700" : ""
               }`}
