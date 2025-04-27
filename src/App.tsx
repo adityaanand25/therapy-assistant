@@ -76,7 +76,7 @@ function App() {
           <h1 className="text-3xl font-bold text-gray-800 flex items-center gap-2">
             <Heart className="text-rose-600 w-8 h-8 animate-pulse" />
             <span className="bg-gradient-to-r from-rose-600 to-pink-500 text-transparent bg-clip-text">
-              Therapeutic AI Assistant
+              ExamPrepAI
             </span>
           </h1>
           <div className="flex gap-4 text-gray-700">
