@@ -187,7 +187,7 @@ function App() {
           <h1 className="text-3xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
             <Heart className="text-rose-600 w-8 h-8 animate-pulse" />
             <span className="bg-gradient-to-r from-rose-600 to-pink-500 text-transparent bg-clip-text">
-              ExamPrepAI
+              EduChat AI
             </span>
           </h1>
           <div className="flex items-center gap-4">
