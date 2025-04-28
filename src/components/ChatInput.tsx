@@ -1,43 +1,43 @@
 import { useState } from "react";
+import { SendHorizonal } from "lucide-react";
 
-const ChatInput = ({ onSend, disabled }: { onSend: (msg: string) => void; disabled: boolean }) => {
-  const [input, setInput] = useState("");
+interface ChatInputProps {
+  onSend: (message: string) => void;
+  disabled?: boolean;
+}
 
-  const handleSend = () => {
-    if (input.trim()) {
-      onSend(input);
-      setInput("");
-    }
-  };
+export function ChatInput({ onSend, disabled }: ChatInputProps) {
+  const [message, setMessage] = useState("");
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && !disabled) {
-      handleSend();
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (message.trim() && !disabled) {
+      onSend(message.trim());
+      setMessage("");
     }
   };
 
   return (
-    <div className="flex gap-3 p-4">
+    <form onSubmit={handleSubmit} className="relative">
       <input
         type="text"
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        onKeyDown={handleKeyDown}
-        className="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none transition"
-        placeholder="Type your message..."
+        value={message}
+        onChange={(e) => setMessage(e.target.value)}
+        placeholder="Type your question here..."
+        className="w-full px-4 py-3 pr-12 bg-transparent border border-gray-300/50 dark:border-gray-600/50 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:text-white placeholder-gray-500 dark:placeholder-gray-400 backdrop-blur-sm transition-all"
         disabled={disabled}
       />
       <button
-        onClick={handleSend}
-        className={`p-3 bg-blue-500 text-white rounded-lg transition hover:bg-blue-600 ${
-          disabled && "opacity-50 cursor-not-allowed"
+        type="submit"
+        disabled={disabled || !message.trim()}
+        className={`absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-full transition-all duration-200 ${
+          disabled || !message.trim()
+            ? "opacity-50 cursor-not-allowed"
+            : "hover:bg-gray-100 dark:hover:bg-gray-700 text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
         }`}
-        disabled={disabled}
       >
-        Send
+        <SendHorizonal className="w-5 h-5" />
       </button>
-    </div>
+    </form>
   );
-};
-
-export { ChatInput };
+}

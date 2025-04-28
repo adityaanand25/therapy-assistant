@@ -11,24 +11,30 @@ export function AuthPage({ onAuth }: AuthPageProps) {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setSuccess("");
 
     if (isSignUp) {
       // Handle registration
       const success = authService.register(email, password, name);
       if (success) {
-        // Auto login after registration
+        // Auto login after successful registration
         const loginResult = authService.login(email, password);
         if (loginResult.success) {
           onAuth(email);
         } else {
-          setError(loginResult.message);
+          setError("Registration successful but login failed. Please try logging in.");
+          // Switch to login form after successful registration
+          setIsSignUp(false);
+          setPassword(""); // Clear password for security
         }
       } else {
-        setError("Email already registered");
+        setError("Email already registered. Please try logging in.");
+        setIsSignUp(false); // Switch to login form
       }
     } else {
       // Handle login
@@ -41,9 +47,16 @@ export function AuthPage({ onAuth }: AuthPageProps) {
     }
   };
 
+  const handleToggleMode = () => {
+    setIsSignUp(!isSignUp);
+    setError("");
+    setSuccess("");
+    setPassword(""); // Clear password when switching modes
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-100 to-blue-50 dark:from-gray-900 dark:to-gray-800">
-      <div className="bg-white dark:bg-gray-800 p-8 rounded-xl shadow-lg max-w-md w-full">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-blue-100 to-blue-50 dark:from-gray-900 dark:to-gray-800 pattern-dots bg-auth-pattern">
+      <div className="bg-white/90 dark:bg-gray-800/90 p-8 rounded-xl shadow-lg max-w-md w-full backdrop-blur-sm hover-lift">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
             ExamPrepAI
@@ -56,6 +69,12 @@ export function AuthPage({ onAuth }: AuthPageProps) {
         {error && (
           <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">
             {error}
+          </div>
+        )}
+
+        {success && (
+          <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded-lg">
+            {success}
           </div>
         )}
 
@@ -73,6 +92,7 @@ export function AuthPage({ onAuth }: AuthPageProps) {
                 className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                 placeholder="John Doe"
                 required={isSignUp}
+                minLength={2}
               />
             </div>
           )}
@@ -104,6 +124,7 @@ export function AuthPage({ onAuth }: AuthPageProps) {
               className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
               placeholder="••••••••"
               required
+              minLength={6}
             />
           </div>
 
@@ -117,10 +138,7 @@ export function AuthPage({ onAuth }: AuthPageProps) {
 
         <div className="mt-6 text-center">
           <button
-            onClick={() => {
-              setIsSignUp(!isSignUp);
-              setError("");
-            }}
+            onClick={handleToggleMode}
             className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
           >
             {isSignUp

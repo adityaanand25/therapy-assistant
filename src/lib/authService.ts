@@ -14,31 +14,51 @@ class AuthService {
   private activeSessions: Session[] = [];
 
   register(email: string, password: string, name?: string): boolean {
+    // Normalize email to lowercase for case-insensitive comparison
+    const normalizedEmail = email.toLowerCase();
+    
     // Check if user already exists
-    if (this.users.some(user => user.email === email)) {
+    if (this.users.some(user => user.email.toLowerCase() === normalizedEmail)) {
       return false;
     }
 
-    this.users.push({ email, password, name });
+    // Add new user with normalized email
+    this.users.push({ email: normalizedEmail, password, name });
+    
+    // For debugging
+    console.log('Registered users:', this.users);
     return true;
   }
 
   login(email: string, password: string): { success: boolean; message: string } {
-    // Check if user exists and password matches
-    const user = this.users.find(u => u.email === email && u.password === password);
+    // Normalize email for comparison
+    const normalizedEmail = email.toLowerCase();
+    
+    // Find user with normalized email
+    const user = this.users.find(u => 
+      u.email.toLowerCase() === normalizedEmail && u.password === password
+    );
+
+    // For debugging
+    console.log('Login attempt:', { email: normalizedEmail, found: !!user });
+    console.log('Current users:', this.users);
+
     if (!user) {
       return { success: false, message: "Invalid credentials" };
     }
 
     // Check if user is already logged in
-    const existingSession = this.activeSessions.find(session => session.email === email);
+    const existingSession = this.activeSessions.find(session => 
+      session.email.toLowerCase() === normalizedEmail
+    );
+
     if (existingSession) {
       return { success: false, message: "This account is already logged in on another device" };
     }
 
     // Create new session
     this.activeSessions.push({
-      email,
+      email: normalizedEmail,
       timestamp: Date.now()
     });
 
@@ -46,11 +66,17 @@ class AuthService {
   }
 
   logout(email: string): void {
-    this.activeSessions = this.activeSessions.filter(session => session.email !== email);
+    const normalizedEmail = email.toLowerCase();
+    this.activeSessions = this.activeSessions.filter(session => 
+      session.email.toLowerCase() !== normalizedEmail
+    );
   }
 
   isAuthenticated(email: string): boolean {
-    return this.activeSessions.some(session => session.email === email);
+    const normalizedEmail = email.toLowerCase();
+    return this.activeSessions.some(session => 
+      session.email.toLowerCase() === normalizedEmail
+    );
   }
 }
 
